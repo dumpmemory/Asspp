@@ -56,15 +56,18 @@ jobs:
         with:
           packages: ldid findutils sed coreutils make
 
+      # Output artifacts outside the repo: both compile scripts begin with
+      # `git clean -fdx`, so an artifact left in the working tree would be
+      # deleted by the next build step.
       - name: Build iOS package
         run: |
           chmod +x Resources/Scripts/compile.release.mobile.ci.sh
-          ./Resources/Scripts/compile.release.mobile.ci.sh "$(pwd)" "$(pwd)/Asspp.ipa"
+          ./Resources/Scripts/compile.release.mobile.ci.sh "$(pwd)" "${RUNNER_TEMP}/Asspp.ipa"
 
       - name: Build macOS package
         run: |
           chmod +x Resources/Scripts/compile.release.osx.sh
-          ./Resources/Scripts/compile.release.osx.sh "$(pwd)" "$(pwd)/Asspp.zip"
+          ./Resources/Scripts/compile.release.osx.sh "$(pwd)" "${RUNNER_TEMP}/Asspp.zip"
 
       - name: Create GitHub release
         env:
@@ -82,6 +85,6 @@ jobs:
         run: |
           set -euo pipefail
           gh release upload "${GITHUB_REF_NAME}" \
-            "Asspp.ipa" \
-            "Asspp.zip" \
+            "${RUNNER_TEMP}/Asspp.ipa" \
+            "${RUNNER_TEMP}/Asspp.zip" \
             --clobber
