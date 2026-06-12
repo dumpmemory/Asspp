@@ -14,8 +14,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Select Xcode 26
-        run: sudo xcode-select -s /Applications/Xcode_26.0.app
+      - name: Select Xcode
+        run: |
+          set -euo pipefail
+          for XCODE_APP in \
+            /Applications/Xcode_26.2.app \
+            /Applications/Xcode_26.1.app \
+            /Applications/Xcode_26.0.app \
+            /Applications/Xcode.app
+          do
+            if [ -d "${XCODE_APP}" ]; then
+              sudo xcode-select -s "${XCODE_APP}"
+              break
+            fi
+          done
+          xcodebuild -version
+
+      - name: Ensure iOS platform is installed
+        run: xcodebuild -downloadPlatform iOS || true
 
       - name: Install Procursus
         uses: dhinakg/procursus-action@main
@@ -40,8 +56,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Select Xcode 26
-        run: sudo xcode-select -s /Applications/Xcode_26.0.app
+      - name: Select Xcode
+        run: |
+          set -euo pipefail
+          for XCODE_APP in \
+            /Applications/Xcode_26.2.app \
+            /Applications/Xcode_26.1.app \
+            /Applications/Xcode_26.0.app \
+            /Applications/Xcode.app
+          do
+            if [ -d "${XCODE_APP}" ]; then
+              sudo xcode-select -s "${XCODE_APP}"
+              break
+            fi
+          done
+          xcodebuild -version
 
       - name: Install Procursus
         uses: dhinakg/procursus-action@main
